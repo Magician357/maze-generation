@@ -31,11 +31,33 @@ class maze:
         # final+="-"*(self.width*3)
         # final+="+"
         return final
+    
+    @property
+    def aslist(self):
+        cur=[[1 for n in range((self.width*2)+1)]]
+        for row in self.grid:
+            currow=[1]
+            currowBot=[1]
+            for cell in row:
+                currow.append(0)
+                currow.append(cell[3])
+                currowBot.append(cell[2])
+                currowBot.append(1)
+            cur.append(currow)
+            cur.append(currowBot)
+        return cur
 
 def test_maze():
     cur=maze(10,10)
-    cur[5,5]=[0,0,0,0,0]
     print(cur[0,0])
     print(cur[5,5])
     print(cur[9,9])
     print(cur.display)
+    a=cur.aslist
+    for row in a:
+        for cell in row:
+            print(" " if cell == 0 else "■",end="")
+        print("")
+        
+if __name__ == "__main__":
+    test_maze()
