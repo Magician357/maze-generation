@@ -45,10 +45,10 @@ def random_index(length):
 def oldest(length):
     return 0
 
-def random_newest(length):
+def random_newest(length):  
     # editable variables:
     chance1=1
-    chance2=3
+    chance2=2
     choice=randint(0,chance1+chance2)
     if choice <= chance1:
         return random_index(length)
