@@ -54,15 +54,16 @@ def random_newest(length):
         return random_index(length)
     else:
         return newest(length)
-    
-print("Newest (recursive backtrack)")
-print(generate_growing_tree_maze(5,10,newest,(4,0)).display)
-print("\nRandom")
-print(generate_growing_tree_maze(5,10,random_index,(4,0)).display)
-print("\nOldest")
-print(generate_growing_tree_maze(5,10,oldest,(4,0)).display)
-print("\nNewest and Random (split, check program for chances)")
-print(generate_growing_tree_maze(5,10,random_newest,(4,0)).display)
+
+if __name__ == "__main__":    
+    print("Newest (recursive backtrack)")
+    print(generate_growing_tree_maze(5,10,newest,(4,0)).display)
+    print("\nRandom")
+    print(generate_growing_tree_maze(5,10,random_index,(4,0)).display)
+    print("\nOldest")
+    print(generate_growing_tree_maze(5,10,oldest,(4,0)).display)
+    print("\nNewest and Random (split, check program for chances)")
+    print(generate_growing_tree_maze(5,10,random_newest,(4,0)).display)
 
 # a=generate_growing_tree_maze(5,10,random_newest,(4,0)).aslist
 # for row in a:

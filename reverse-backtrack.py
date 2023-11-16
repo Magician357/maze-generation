@@ -11,7 +11,7 @@ dx=[0,0,1,-1]
 dy=[-1,1,0,0]
 opposite={1:2,2:1,3:4,4:3}
 
-def carve_passages_from(currentX,currentY,maze,depth=0):
+def carve_passages_from(currentX,currentY,maze,depth=0):    
     shuffle(directions)
     
     # print(depth)
