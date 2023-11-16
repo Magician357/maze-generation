@@ -3,6 +3,8 @@ from random import choice, randint, shuffle
 
 # [Checked, North, South, East, West, display=" ",direction,extra2]
 
+# https://weblog.jamisbuck.org/2011/1/20/maze-generation-wilson-s-algorithm
+
 directions=[1,2,3,4]
 dx=[0,0,0,1,-1]
 dy=[0,-1,1,0,0]
