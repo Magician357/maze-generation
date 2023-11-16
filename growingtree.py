@@ -18,7 +18,8 @@ def generate_growing_tree_maze(height,width,index_choose_function,start=None):
         x,y=current[index]
         
         shuffle(directions)
-        for direction in directions:
+        local_directions=directions.copy()
+        for direction in local_directions:
             newX,newY=x+dx[direction-1], y+dy[direction-1] # Store next position
             if newX >= 0 and newX < maze.width and newY >= 0 and newY < maze.height and maze[newX,newY][0]==0:
                 
