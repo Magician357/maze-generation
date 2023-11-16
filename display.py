@@ -63,7 +63,7 @@ while running:
     screen.fill("white")
 
     draw_text("Press S to randomize start and end points",(10,10),screen,font_large)
-    draw_text("Press and hold H to solve maze")
+    draw_text("Press and hold H to solve maze",(10,40),screen,font_large)
 
     # draw background
     pygame.draw.rect(screen,(240,240,240),background)
