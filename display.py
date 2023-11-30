@@ -1,15 +1,19 @@
 import pygame
 from growingtree import generate_growing_tree_maze
 from random import randint, shuffle
+from math import floor
 
+cur_index_counter=1
 def choose_index(length):
-    return length-1 if randint(1,2) == 2 else (0 if randint(1,2) == 1 else randint(0,length-1))
+    global cur_index_counter
+    cur_index_counter=(cur_index_counter%4)+1
+    return length-1 if cur_index_counter == 1 else floor(length/2) if cur_index_counter == 2 else randint(0,length-1)
 
 # north, south, east, west
 
 opposite={1:2,2:1,3:4,4:3}
 
-def generate_directions(maze,start_point,end_point):
+def generate_directions_dfs(maze,start_point,end_point):
     directions=[1,2,3,4]
     dx=[0,0,0,1,-1]
     dy=[0,-1,1,0,0]
@@ -23,13 +27,36 @@ def generate_directions(maze,start_point,end_point):
             #     return
             if maze[cx,cy][direction] == 0:
                 directions_list[ny][nx]=opposite[direction]
-                generate_directions(maze,(nx,ny),end_point)
+                generate_directions_dfs(maze,(nx,ny),end_point)
 
     dir_string=[" ","N","S","E","W","#"]
     for y in range(maze_height):
         for x in range(maze_width):
             maze[x,y][5]=dir_string[directions_list[y][x]]
 
+def generate_directions_bfs(maze,start_point,end_point):
+    backlog=[start_point]
+    directions=[1,2,3,4]
+    dx=[0,0,0,1,-1]
+    dy=[0,-1,1,0,0]
+    while len(backlog)>0:
+        cx,cy=backlog[0]
+        
+        for direction in directions:
+            nx=cx+dx[direction]
+            ny=cy+dy[direction]
+            if nx >= 0 and ny >= 0 and nx < maze_width and ny < maze_height and directions_list[ny][nx] == 0 and maze[cx,cy][direction] == 0:
+                backlog.append((nx,ny)) # add to list to be used again
+                directions_list[ny][nx]=opposite[direction] # log path to point
+        
+        backlog.pop(0)
+    
+    dir_string=[" ","N","S","E","W","#"]
+    for y in range(maze_height):
+        for x in range(maze_width):
+            maze[x,y][5]=dir_string[directions_list[y][x]]
+            
+                
 def generate_path_from(cx,cy,curpath,sx,sy):
     
     if not sx or not sy:
@@ -63,8 +90,8 @@ running = True
 
 background = pygame.Rect(100,100,600,600)
 
-maze_width=15
-maze_height=15
+maze_width=8
+maze_height=8
 
 line_width=600/maze_width
 line_height=600/maze_height
@@ -92,6 +119,8 @@ sCurX=0
 sCurY=0
 
 path=[]
+paths=[]
+paths_extra=[]
 
 while running:
     # poll for events
@@ -110,12 +139,14 @@ while running:
                 end=(randint(0,maze_width-1),randint(0,maze_height-1))
             solved=False
             path=[]
+            paths=[]
         if pressed[pygame.K_m]:
             maze=generate_growing_tree_maze(maze_width,maze_height,choose_index)
             print(maze.display)
             maze_list=maze.grid
             solved=False
             path=[]
+            paths=[]
     elif pressed[pygame.K_h]:
         print("h pressed")
         if not solved:
@@ -126,11 +157,27 @@ while running:
             directions_list[sCurY][sCurX]=5
             path=[]
             
-            generate_directions(maze,start,end)
+            generate_directions_bfs(maze,start,end)
             print(maze.display)
             path=generate_path_from(end[0],end[1],[],end[0],end[1])
             print(",".join([str(a) for a in path]))
-
+            paths=[path]
+    elif pressed[pygame.K_v]:
+        if not solved:
+            solved=True
+            sCurX, sCurY = start    
+            directions_list=[[0 for _ in range(maze_width)] for _ in range (maze_height)]
+            directions_list[sCurY][sCurX]=5
+            generate_directions_bfs(maze,start,end)
+            
+        for y in range(maze_height):
+            for x in range(maze_width):
+                curpath=generate_path_from(x,y,[],end[0],end[1])
+                paths_extra.append(curpath)
+        if len(paths) <= 1:
+            paths+=paths_extra
+        else:
+            paths=paths_extra
 
     
     # fill the screen with a color to wipe away anything from last frame
@@ -171,9 +218,10 @@ while running:
     pygame.draw.circle(screen,(255,0,0),cell_to_pos(end[0],end[1]),10)
 
     # draw path
-    if len(path) >=2:
-        for n in range(len(path)-1):
-            pygame.draw.line(screen,(255,0,255),tCell_to_pos(path[n]),tCell_to_pos(path[n+1]))
+    for curpath in paths:
+        if len(curpath) >=2:
+            for n in range(len(curpath)-1):
+                pygame.draw.line(screen,(255,0,255),tCell_to_pos(curpath[n]),tCell_to_pos(curpath[n+1]))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
